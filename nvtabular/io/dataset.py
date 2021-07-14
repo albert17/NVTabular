@@ -29,6 +29,11 @@ from dask.utils import natural_sort_key, parse_bytes
 from fsspec.core import get_fs_token_paths
 from fsspec.utils import stringify_path
 
+try:
+    import cudf
+except ImportError:
+    cudf = None
+
 from nvtabular.dispatch import _convert_data, _hex_to_int, _is_dataframe_object
 from nvtabular.io.shuffle import _check_shuffle_arg
 
@@ -209,7 +214,8 @@ class Dataset:
         self.client = client
 
         # Check if we are keeping data in cpu memory
-        self.cpu = cpu or False
+        if not self.cpu:
+            self.cpu = False if not cudf else True
 
         # Keep track of base dataset (optional)
         self.base_dataset = base_dataset or self

@@ -20,6 +20,7 @@ from distutils.spawn import find_executable
 
 from setuptools import find_packages, setup
 from setuptools.command.build_ext import build_ext
+from pip.req import parse_requirements
 
 import versioneer
 
@@ -56,6 +57,9 @@ class build_proto(build_ext):
 cmdclass = versioneer.get_cmdclass()
 cmdclass["build_ext"] = build_proto
 
+# Get requirements packages
+install_reqs = parse_requirements("./requitements.txt")
+reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name="nvtabular",
@@ -75,4 +79,5 @@ setup(
         "Topic :: Scientific/Engineering",
     ],
     cmdclass=cmdclass,
+    install_requires=reqs,
 )
